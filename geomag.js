@@ -57,42 +57,38 @@ function geoMagFactory(wmm) {
 		return deg * (Math.PI / 180);
 	}
 
-	var i,
-		epoch = wmm.epoch,
-		model = wmm.model,
-		z = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-		initarray = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
-		maxord = 12,
-		maxdeg = maxord,
-		tc = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
-		sp = z.slice(),
-		cp = z.slice(),
-		pp = z.slice(),
-		p = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
-		dp = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
-		a = 6378.137,
-		b = 6356.7523142,
-		re = 6371.2,
-		a2 = a * a,
-		b2 = b * b,
-		c2 = a2 - b2,
-		a4 = a2 * a2,
-		b4 = b2 * b2,
-		c4 = a4 - b4,
-		c = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
-		cd = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
-		snorm = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
-		k = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
-		fn = [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-		fm = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-		n, m, j, D2, flnmj;
+	var i, epoch, model, z, initarray, maxord, maxdeg, tc, sp, cp, pp, p, dp, a, b, re, a2, b2, c2, a4, b4, c4, c, cd, n, m, snorm, j, k, flnmj, fn, fm, D2;
 
+	z = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	initarray = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()];
+	maxord = maxdeg = 12;
+
+	tc = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()];
 	tc[0][0] = 0;
+	sp = z.slice();
 	sp[0] = 0.0;
+	cp = z.slice();
 	cp[0] = 1.0;
+	pp = z.slice();
 	pp[0] = 1.0;
+	p = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()];
 	p[0][0] = 1;
+	dp = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()];
+	a = 6378.137;
+	b = 6356.7523142;
+	re = 6371.2;
+	a2 = a * a;
+	b2 = b * b;
+	c2 = a2 - b2;
+	a4 = a2 * a2;
+	b4 = b2 * b2;
+	c4 = a4 - b4;
 
+	c = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()];
+	cd = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()];
+
+	epoch = wmm.epoch;
+	model = wmm.wmm;
 	for (i in model) {
 		if (model.hasOwnProperty(i)) {
 			if (model[i].m <= model[i].n) {
@@ -109,11 +105,16 @@ function geoMagFactory(wmm) {
 	model = null;
 
 	/* CONVERT SCHMIDT NORMALIZED GAUSS COEFFICIENTS TO UNNORMALIZED */
+	snorm = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()];
 	snorm[0][0] = 1;
+	k = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()];
+	fn = [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+	fm = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 	for (n = 1; n <= maxord; n++) {
 		snorm[0][n] = snorm[0][n - 1] * (2 * n - 1) / n;
 		j = 2;
+
 		m = 0;
 		D2 = (n - m + 1);
 		while (D2 > 0) { 
@@ -135,24 +136,8 @@ function geoMagFactory(wmm) {
 	k[1][1] = 0.0;
 
 	return function (dlat, dlon, h, time) {
-		var now,
-			alt = h / 3280.8399, // convert h (in feet) to meters
-			otime = -1000.0,
-			oalt = otime,
-			olat = otime,
-			olon = otime,
-			dt = time - epoch,
-			glat = dlat,
-			glon = dlon,
-			rlat = deg2rad(glat),
-			rlon = deg2rad(glon),
-			srlon = Math.sin(rlon),
-			srlat = Math.sin(rlat),
-			crlon = Math.cos(rlon),
-			crlat = Math.cos(rlat),
-			srlat2 = srlat * srlat,
-			crlat2 = crlat * crlat,
-			q, q1, q2, ct, st,
+		var  now, alt, otime, oalt, olat, olon, dt,
+			glat, glon, rlat, rlon, srlon, srlat, crlon, crlat, crlat2, srlat2, q, q1, q2, ct, st,
 			r2, r, d, ca, sa, aor, ar, br, bt, bp, bpp, par, temp1, temp2, parp, D4,
 			bx, by, bz, bh, ti, dec, dip, gv;
 		if (h === undefined) { h = 0; }
@@ -160,6 +145,25 @@ function geoMagFactory(wmm) {
 			now = new Date();
 			time = now.getFullYear() + (now.getMonth() + ((now.getDate() - 1) / 31)) / 12;
 		}
+
+		alt = h / 3280.8399; // convert h (in feet) to meters
+
+		otime = -1000.0;
+		oalt = otime;
+		olat = otime;
+		olon = otime;
+
+		dt = time - epoch;
+		glat = dlat;
+		glon = dlon;
+		rlat = deg2rad(glat);
+		rlon = deg2rad(glon);
+		srlon = Math.sin(rlon);
+		srlat = Math.sin(rlat);
+		crlon = Math.cos(rlon);
+		crlat = Math.cos(rlat);
+		srlat2 = srlat * srlat;
+		crlat2 = crlat * crlat;
 
 		sp[1] = srlon;
 		cp[1] = crlon;

@@ -7,12 +7,13 @@
 			text-align:right;
 		}
 		</style>
-		<script src="geomag.js"></script>
+		<script src="geomag_2011-09-16.js"></script>
+		<script src="wmmViaXHR.js"></script>
 		<script>
 		var pathArr = window.location.href.split("/");
 		pathArr.pop();
 		var path = pathArr.join("/");
-		var geoMag = geoMagFactory(path + "/WMM.COF");
+		var geoMag = geoMagFactory(wmmViaXHR(path + "/WMM.COF"));
 		function calculate() {
 			var lat = parseFloat(document.getElementById("lat").value);
 			var lon = parseFloat(document.getElementById("lon").value);
@@ -24,7 +25,7 @@
 	</head>
 	<body>
 	<h1>Geomag Library Demo</h1>
-	This is a simple page to demonstrate the <a href="geomag2.js">geomag2.js</a> library which depends on <a href="WMM.COF">this coefficient file</a>.
+	This is a simple page to demonstrate the <a href="geomag.js">geomag.js</a> library which depends on <a href="WMM.COF">this coefficient file</a>.
 	The coefficient file and more information are available at <a href="http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml">The World Magnetic Model</a> site of NOAA's National Geophysical Data Center.
 	<table>
 	<tr><td class="labelr">Latitude:</td><td><input id="lat" value="40"></td><td>(decimal degrees - north is positive)</td></tr>
