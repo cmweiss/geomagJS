@@ -1,4 +1,5 @@
 /*	2012-03-26
+
 	by Christopher Weiss (cmweiss@gmail.com)
 	Suggestions for improvements are appreciated.
 
@@ -14,8 +15,8 @@
 	file and returns the WMM.COF file as text.
 
 	Usage:
-	geoMagFactory(wmm) returns a function which can compute the Earth's magnetic
-	field.  If it cannot successfully fetch the URL then it returns false.
+	geoMagFactory(wmm) returns a function which can compute the Earth's
+	magnetic field.
 	The returned function requires two arguments, latitude and longitude (in
 	decimal degrees), and, optionally, altitude in feet (default is 0), and
 	time in decimal years (e.g. 2009.75 -- default is the current system time).
@@ -26,17 +27,27 @@
 	var latitude = 40.0;	// decimal degrees (north is positive)
 	var longitude = -80.0;	// decimal degrees (east is positive)
 	var altitude = 0;	// feet (optional, default is 0)
-	var time = 2006.0;	// decimal years (optional, default is the current system time)
+	var time = 2006.0;	// decimal years (optional, default is the current
+						// system time)
 	var myGeoMag = geoMag(latitude,longitude,altitude,time);
-	var magneticVariation = myGeoMag.dec;	// Geomagnetic declination (variation) in decimal degrees -- east is positive
-	var magneticDip = myGeoMag.dip;	// Geomagnetic dip in decimal degreed (down is positive)
-	var magneticFieldIntensity = myGeoMag.ti;	// Total Intensity of the geomagnetic field in nanoteslas
-	var magneticBH = myGeoMag.bh;	// Horizontal Intensity of the geomagnetic field in nanoteslas
-	var magneticBX = myGeoMag.bx;	// North Component of the geomagnetic field in nanoteslas
-	var magneticBY = myGeoMag.by;	// East Component of the geomagnetic field in nanoteslas
-	var magneticBZ = myGeoMag.bz;	// Vertical Component of the geomagnetic field (down is positive)
+	var magneticVariation = myGeoMag.dec;	// Geomagnetic declination
+											// (variation) in decimal degrees
+											// -- east is positive
+	var magneticDip = myGeoMag.dip;	// Geomagnetic dip in decimal degreed
+									// (down is positive)
+	var magneticFieldIntensity = myGeoMag.ti;	// Total Intensity of the
+												// geomagnetic field in
+												// nanoteslas
+	var magneticBH = myGeoMag.bh;	// Horizontal Intensity of the geomagnetic
+									// field in nanoteslas
+	var magneticBX = myGeoMag.bx;	// North Component of the geomagnetic field
+									// in nanoteslas
+	var magneticBY = myGeoMag.by;	// East Component of the geomagnetic field
+									// in nanoteslas
+	var magneticBZ = myGeoMag.bz;	// Vertical Component of the geomagnetic
+									// field (down is positive)
 	var lat = myGeoMag.lat;	// input latitude
-	var lon = myGeoMag.lon;	//input longitude
+	var lon = myGeoMag.lon;	// input longitude
 
 	Differences from NGDC test values:
 	Test values available at 
@@ -50,6 +61,7 @@
 	differ.  It appears that the test values convert the degree & minute output
 	to decimal degrees and round to the nearest hundredth of a degree.
 */
+
 /*jslint plusplus: true, maxerr: 50, indent: 4 */
 function geoMagFactory(wmm) {
 	'use strict';
@@ -63,12 +75,18 @@ function geoMagFactory(wmm) {
 	var i, model, epoch = wmm.epoch,
 		z = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 		maxord = 12,
-		tc = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
+		tc = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice()],
 		sp = z.slice(),
 		cp = z.slice(),
 		pp = z.slice(),
-		p = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
-		dp = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
+		p = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice()],
+		dp = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice()],
 		a = 6378.137,
 		b = 6356.7523142,
 		re = 6371.2,
@@ -78,12 +96,20 @@ function geoMagFactory(wmm) {
 		a4 = a2 * a2,
 		b4 = b2 * b2,
 		c4 = a4 - b4,
-		c = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
-		cd = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
+		c = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice()],
+		cd = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice()],
 		n, m,
-		snorm = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
+		snorm = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice(), z.slice()],
 		j,
-		k = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice()],
+		k = [z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice(), z.slice(), z.slice(), z.slice(), z.slice(), z.slice(),
+			z.slice()],
 		flnmj,
 		fn = [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
 		fm = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
@@ -119,7 +145,8 @@ function geoMagFactory(wmm) {
 		j = 2;
 
 		for (m = 0, D2 = (n - m + 1); D2 > 0; D2--, m++) {
-			k[m][n] = (((n - 1) * (n - 1)) - (m * m)) / ((2 * n - 1) * (2 * n - 3));
+			k[m][n] = (((n - 1) * (n - 1)) - (m * m)) /
+				((2 * n - 1) * (2 * n - 3));
 			if (m > 0) {
 				flnmj = ((n - m + 1) * j) / (n + m);
 				snorm[m][n] = snorm[m - 1][n] * Math.sqrt(flnmj);
@@ -135,7 +162,8 @@ function geoMagFactory(wmm) {
 
 	return function (dlat, dlon, h, time) {
 		var now = new Date(),
-			alt = (h / 3280.8399) || 0, // convert h (in feet) to meters or set default of 0 meters
+			// convert h (in feet) to meters or set default of 0 meters
+			alt = (h / 3280.8399) || 0,
 			otime = -1000.0,
 			oalt = otime,
 			olat = otime,
@@ -178,10 +206,12 @@ function geoMagFactory(wmm) {
 			bh,
 			ti,
 			dec,
-			dip,
-			gv;
+			dip;
+//			gv;		
 
-		time = time || now.getFullYear() + (now.getMonth() + ((now.getDate() - 1) / 31)) / 12;
+		time = time ||
+			now.getFullYear() + (now.getMonth() + ((now.getDate() - 1) / 31)) /
+			12;
 		dt = time - epoch;
 		sp[1] = srlon;
 		cp[1] = crlon;
@@ -219,7 +249,8 @@ function geoMagFactory(wmm) {
 				if (alt !== oalt || glat !== olat) {
 					if (n === m) {
 						p[m][n] = st * p[m - 1][n - 1];
-						dp[m][n] = st * dp[m - 1][n - 1] + ct * p[m - 1][n - 1];
+						dp[m][n] = st * dp[m - 1][n - 1] + ct *
+							p[m - 1][n - 1];
 					} else if (n === 1 && m === 0) {
 						p[m][n] = ct * p[m][n - 1];
 						dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1];
@@ -227,7 +258,8 @@ function geoMagFactory(wmm) {
 						if (m > n - 2) { p[m][n - 2] = 0; }
 						if (m > n - 2) { dp[m][n - 2] = 0.0; }
 						p[m][n] = ct * p[m][n - 1] - k[m][n] * p[m][n - 2];
-						dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1] - k[m][n] * dp[m][n - 2];
+						dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1] -
+							k[m][n] * dp[m][n - 2];
 					}
 				}
 		/*
@@ -235,7 +267,9 @@ function geoMagFactory(wmm) {
 		*/
 
 				tc[m][n] = c[m][n] + dt * cd[m][n];
-				if (m !== 0) { tc[n][m - 1] = c[n][m - 1] + dt * cd[n][m - 1]; }
+				if (m !== 0) {
+					tc[n][m - 1] = c[n][m - 1] + dt * cd[n][m - 1];
+				}
 
 		/*
 				ACCUMULATE TERMS OF THE SPHERICAL HARMONIC EXPANSIONS
@@ -262,7 +296,6 @@ function geoMagFactory(wmm) {
 			}
 		}
 
-//		if (st === 0.0) { bp = bpp; } else { bp /= st; }
 		bp = (st === 0.0 ? bpp : bp / st);
 		/*
 			ROTATE MAGNETIC VECTOR COMPONENTS FROM SPHERICAL TO
@@ -280,12 +313,16 @@ function geoMagFactory(wmm) {
 		ti = Math.sqrt((bh * bh) + (bz * bz));
 		dec = rad2deg(Math.atan2(by, bx));
 		dip = rad2deg(Math.atan2(bz, bh));
+
 		/*
 			COMPUTE MAGNETIC GRID VARIATION IF THE CURRENT
 			GEODETIC POSITION IS IN THE ARCTIC OR ANTARCTIC
 			(I.E. GLAT > +55 DEGREES OR GLAT < -55 DEGREES)
 			OTHERWISE, SET MAGNETIC GRID VARIATION TO -999.0
 		*/
+
+/*
+//		Grid Variation not yet implemented.
 		gv = -999.0;
 		if (Math.abs(glat) >= 55.0) {
 			if (glat > 0.0 && glon >= 0.0) { gv = dec - glon; }
@@ -295,11 +332,11 @@ function geoMagFactory(wmm) {
 			if (gv > +180.0) { gv -= 360.0; }
 			if (gv < -180.0) { gv += 360.0; }
 		}
+*/
 //		otime = time;
 //		oalt = alt;
 //		olat = glat;
 //		olon = glon;
-
 		return {dec: dec, dip: dip, ti: ti, bh: bh, bx: bx, by: by, bz: bz, lat: dlat, lon: dlon};
 	};
 }
