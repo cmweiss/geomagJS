@@ -1,25 +1,28 @@
-/*
+/*	2012-03-26
 	by Christopher Weiss (cmweiss@gmail.com)
 	Suggestions for improvements are appreciated.
-	
+
 	Adapted from the geomagc software and World Magnetic Model of the NOAA
 	Satellite and Information Service, National Geophysical Data Center
 	http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml
 
-	geoMagFactory() requires a world magnetic model coefficient file (available
-	at the above NGDC site) which is fetched via an XMLHttpRequest and,
-	therefore, requires an "Ajax" capable browser (anything this century). Due
-	to web browser "same-origin" security policy, the coefficient file must be
-	retrieved from the same site as the web page requesting it.
+	geoMagFactory() requires a world magnetic model (WMM) object. The helper
+	function cof2Obj(), available in cof2Obj.js, takes the text of WMM.COF and
+	returns an object suitable for geoMagFactory(). A syncronous XMLHttpRequest
+	to fetch the WMM.COF is recommended in a web environment. The helper
+	function syncXHR(), available in syncXHR.js, takes the url of the WMM.COF
+	file and returns the WMM.COF file as text.
 
 	Usage:
-	geoMagFactory(url) returns a function which can compute the Earth's magnetic
+	geoMagFactory(wmm) returns a function which can compute the Earth's magnetic
 	field.  If it cannot successfully fetch the URL then it returns false.
 	The returned function requires two arguments, latitude and longitude (in
 	decimal degrees), and, optionally, altitude in feet (default is 0), and
 	time in decimal years (e.g. 2009.75 -- default is the current system time).
 	
-	var geoMag = geoMagFactory("http://host/dir/WMM.COF");
+	var cof = syncXHR('http://host/path/WMM.COF');
+	var wmm = cof2Obj(cof);
+	var geoMag = geoMagFactory(wmm);
 	var latitude = 40.0;	// decimal degrees (north is positive)
 	var longitude = -80.0;	// decimal degrees (east is positive)
 	var altitude = 0;	// feet (optional, default is 0)

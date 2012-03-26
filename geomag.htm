@@ -7,13 +7,14 @@
 			text-align:right;
 		}
 		</style>
-		<script src="geomag_2011-09-16.js"></script>
-		<script src="wmmViaXHR.js"></script>
+		<script src="geomag.js"></script>
+		<script src="cof2Obj.js"></script>
+		<script src="syncXHR.js"></script>
 		<script>
 		var pathArr = window.location.href.split("/");
 		pathArr.pop();
 		var path = pathArr.join("/");
-		var geoMag = geoMagFactory(wmmViaXHR(path + "/WMM.COF"));
+		var geoMag = geoMagFactory(cof2Obj(syncXHR(path + "/WMM.COF")));
 		function calculate() {
 			var lat = parseFloat(document.getElementById("lat").value);
 			var lon = parseFloat(document.getElementById("lon").value);
