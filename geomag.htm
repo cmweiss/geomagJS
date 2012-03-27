@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Geomag Library Demo</title>
+		<title>Geomag Library Demo and Test</title>
 		<style>
 		.labelr {
 			text-align:right;
@@ -11,21 +11,89 @@
 		<script src="cof2Obj.js"></script>
 		<script src="syncXHR.js"></script>
 		<script>
-		var pathArr = window.location.href.split("/");
-		pathArr.pop();
-		var path = pathArr.join("/");
-		var geoMag = geoMagFactory(cof2Obj(syncXHR(path + "/WMM.COF")));
-		function calculate() {
-			var lat = parseFloat(document.getElementById("lat").value);
-			var lon = parseFloat(document.getElementById("lon").value);
-			var alt = parseFloat(document.getElementById("alt").value);
-			var myGeoMag = geoMag(lat,lon,alt);
-			document.getElementById("var").innerHTML = myGeoMag.dec;
-		}
+var pathArr = window.location.href.split("/");
+pathArr.pop();
+var path = pathArr.join("/");
+var geoMag = geoMagFactory(cof2Obj(syncXHR(path + '/WMM.COF')));
+
+function runTest() {
+	var row,
+		calc,
+		testValues = (function (valueFile) {
+			var i,
+				lines = valueFile.replace(/\r/g, '').split('\n'),
+				model = lines[0],
+				fields,
+				values = [];
+			for (i = 2; i < lines.length; i++) {
+				fields = lines[i].replace(/^\s+|\s+$/g, "").split(/\s+/);
+				values.push({
+					date: fields[0],
+					alt: fields[1] * 3280.8399,
+					lat: fields[2],
+					lon: fields[3],
+					d: fields[4],
+					i: fields[5],
+					h: fields[6],
+					x: fields[7],
+					y: fields[8],
+					z: fields[9],
+					f: fields[10],
+					gv: fields[11] || null
+				});
+			}
+			return {model: model, values: values};
+		})(syncXHR(path + '/testValues.txt'));
+
+	for (i = 0; i < testValues.values.length; i++) {
+		row = document.createElement("tr");
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode("Expected"));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].date));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(parseFloat(testValues.values[i].alt) / 3280.8399));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].lat));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].lon));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].d));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].i));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].h));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].x));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].y));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].z));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].f));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(testValues.values[i].gv));
+		document.getElementById("testBody").appendChild(row);
+		calc = geoMag(parseFloat(testValues.values[i].lat),
+			parseFloat(testValues.values[i].lon),
+			parseFloat(testValues.values[i].alt),
+			parseFloat(testValues.values[i].date));
+		row = document.createElement("tr");
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode("Calculated"));
+		row.appendChild(document.createElement("td"));
+		row.appendChild(document.createElement("td"));
+		row.appendChild(document.createElement("td"));
+		row.appendChild(document.createElement("td"));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(calc.dec.toFixed(2)));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(calc.dip.toFixed(2)));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(calc.bh.toFixed(1)));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(calc.bx.toFixed(1)));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(calc.by.toFixed(1)));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(calc.bz.toFixed(1)));
+		row.appendChild(document.createElement("td")).appendChild(document.createTextNode(calc.ti.toFixed(1)));
+		row.appendChild(document.createElement("td"));
+		document.getElementById("testBody").appendChild(row);
+	}
+}
+
+function calculate() {
+	var lat = parseFloat(document.getElementById("lat").value);
+	var lon = parseFloat(document.getElementById("lon").value);
+	var alt = parseFloat(document.getElementById("alt").value);
+	var myGeoMag = geoMag(lat,lon,alt);
+	document.getElementById("var").innerHTML = myGeoMag.dec;
+}
 		</script>
 	</head>
 	<body>
-	<h1>Geomag Library Demo</h1>
+	<h1>Geomag Library Demo and Test</h1>
 	This is a simple page to demonstrate the <a href="geomag.js">geomag.js</a> library which depends on <a href="WMM.COF">this coefficient file</a>.
 	The coefficient file and more information are available at <a href="http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml">The World Magnetic Model</a> site of NOAA's National Geophysical Data Center.
 	<table>
@@ -35,5 +103,12 @@
 	<tr><td class="labelr">Variation:</td><td id="var"></td><td>(decimal degrees - negative values are east)</td></tr>
 	<tr><td></td><td><button onclick="calculate()">Calculate</button></td><td></td></tr>
 	</table>
+	<table border>
+	<tr><th colspan="13">Test</th></tr>
+	<tr><td colspan="13"><a href="http://www.ngdc.noaa.gov/geomag/WMM/data/WMM2010/WMM2010testvalues.pdf">World Magnetic Model (WMM2010) - Test values.</a> (pdf)</td></tr>
+	<tr><th></th><th>Date</th><th>Alt(km)</th><th>Lat(deg)</th><th>Lon(deg)</th><th>D(deg)</th><th>I(deg)</th><th>H(nT)</th><th>X(nT)</th><th>Y(nT)</th><th>Z(nT)</th><th>F(nT)</th><th>GV(deg)</th></tr>
+	<tbody id="testBody"></tbody>
+	</table>
+	<script>runTest(); </script>
 	</body>
 </html>
