@@ -19,7 +19,7 @@ var cof = syncXHR('http://host/path/WMM.COF'),
     magneticVariation = myGeoMag.dec,   // Geomagnetic declination (variation)
                                         // in decimal degrees
                                         // -- east is positive
-    magneticDip = myGeoMag.dip, // Geomagnetic dip in decimal degreed
+    magneticDip = myGeoMag.dip, // Geomagnetic dip in decimal degrees
                                 // (down is positive)
     magneticFieldIntensity = myGeoMag.ti,   // Total Intensity of the
                                             // geomagnetic field in  nanoteslas
