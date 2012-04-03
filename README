@@ -7,23 +7,25 @@ Usage:
 geoMagFactory(wmm) returns a function which can compute the Earth's magnetic field.
 The returned function requires two arguments, latitude and longitude (in decimal degrees), and, optionally, altitude in feet (default is 0), and time in decimal years (e.g. 2009.75 -- default is the current system time).
 
-var cof = syncXHR('http://host/path/WMM.COF');
-var wmm = cof2Obj(cof);
-var geoMag = geoMagFactory(wmm);
-var latitude = 40.0;	// decimal degrees (north is positive)
-var longitude = -80.0;	// decimal degrees (east is positive)
-var altitude = 0;	// feet (optional, default is 0)
-var time = 2006.0;	// decimal years (optional, default is the current system time)
-var myGeoMag = geoMag(latitude,longitude,altitude,time);
-var magneticVariation = myGeoMag.dec;	// Geomagnetic declination (variation) in decimal degrees  -- east is positive
-var magneticDip = myGeoMag.dip;	// Geomagnetic dip in decimal degreed  (down is positive)
-var magneticFieldIntensity = myGeoMag.ti;	// Total Intensity of the  geomagnetic field in  nanoteslas
-var magneticBH = myGeoMag.bh;	// Horizontal Intensity of the geomagnetic  field in nanoteslas
-var magneticBX = myGeoMag.bx;	// North Component of the geomagnetic field  in nanoteslas
-var magneticBY = myGeoMag.by;	// East Component of the geomagnetic field  in nanoteslas
-var magneticBZ = myGeoMag.bz;	// Vertical Component of the geomagnetic  field (down is positive)
-var lat = myGeoMag.lat;	// input latitude
-var lon = myGeoMag.lon;	// input longitude
+var cof = syncXHR('http://host/path/WMM.COF'),
+	wmm = cof2Obj(cof),
+	geoMag = geoMagFactory(wmm),
+	latitude = 40.0,	// decimal degrees (north is positive)
+	longitude = -80.0,	// decimal degrees (east is positive)
+	altitude = 0,	// feet (optional, default is 0)
+	time = 2006.0,	// decimal years (optional, default is the current system time)
+	myGeoMag = geoMag(latitude,longitude,altitude,time),
+	magneticVariation = myGeoMag.dec,	// Geomagnetic declination (variation
+										// in decimal degrees  -- east is positive
+	magneticDip = myGeoMag.dip,	// Geomagnetic dip in decimal degreed  (down is positive)
+	magneticFieldIntensity = myGeoMag.ti,	// Total Intensity of the  geomagnetic field in  nanoteslas
+	magneticBH = myGeoMag.bh,	// Horizontal Intensity of the geomagneticfield in nanoteslas
+	magneticBX = myGeoMag.bx,	// North Component of the geomagnetic field  in nanoteslas
+	magneticBY = myGeoMag.by,	// East Component of the geomagnetic field  in nanoteslas
+	magneticBZ = myGeoMag.bz,	// Vertical Component of the geomagnetic  field (down is positive)
+	lat = myGeoMag.lat,	// input latitude
+	lon = myGeoMag.lon;	// input longitude
 
-Differences from NGDC test values:
-Test values available at http://www.ngdc.noaa.gov/geomag/WMM/data/2006TestValues_WMM2005.pdf differ slightly from the output of this function.  The difference seems to be due to rounding errors in the reporting of the test values.  NGCD's geomag_windows.exe reports declination in degrees and minutes rounded to the nearest minute.  The output of function in this file, geomag2.js, converted to degrees and minutes and rounded to the nearest minute agree with geomag_windows.exe in all cases where the test value and output value differ.  It appears that the test values convert the degree & minute output to decimal degrees and round to the nearest hundredth of a degree.
+TODO:
+-Implement grid variation.
+-Return model metadata.
