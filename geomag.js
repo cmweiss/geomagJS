@@ -1,65 +1,53 @@
 /*	2012-03-26
 
-	by Christopher Weiss (cmweiss@gmail.com)
-	Suggestions for improvements are appreciated.
+    by Christopher Weiss (cmweiss@gmail.com)
+    Suggestions for improvements are appreciated.
 
-	Adapted from the geomagc software and World Magnetic Model of the NOAA
-	Satellite and Information Service, National Geophysical Data Center
-	http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml
+    Adapted from the geomagc software and World Magnetic Model of the NOAA
+    Satellite and Information Service, National Geophysical Data Center
+    http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml
 
-	geoMagFactory() requires a world magnetic model (WMM) object. The helper
-	function cof2Obj(), available in cof2Obj.js, takes the text of WMM.COF and
-	returns an object suitable for geoMagFactory(). A syncronous XMLHttpRequest
-	to fetch the WMM.COF is recommended in a web environment. The helper
-	function syncXHR(), available in syncXHR.js, takes the url of the WMM.COF
-	file and returns the WMM.COF file as text.
+    geoMagFactory() requires a world magnetic model (WMM) object. The helper
+    function cof2Obj(), available in cof2Obj.js, takes the text of WMM.COF and
+    returns an object suitable for geoMagFactory(). A syncronous XMLHttpRequest
+    to fetch the WMM.COF is recommended in a web environment. The helper
+    function syncXHR(), available in syncXHR.js, takes the url of the WMM.COF
+    file and returns the WMM.COF file as text.
 
-	Usage:
-	geoMagFactory(wmm) returns a function which can compute the Earth's
-	magnetic field.
-	The returned function requires two arguments, latitude and longitude (in
-	decimal degrees), and, optionally, altitude in feet (default is 0), and
-	time in decimal years (e.g. 2009.75 -- default is the current system time).
-	
-	var cof = syncXHR('http://host/path/WMM.COF');
-	var wmm = cof2Obj(cof);
-	var geoMag = geoMagFactory(wmm);
-	var latitude = 40.0;	// decimal degrees (north is positive)
-	var longitude = -80.0;	// decimal degrees (east is positive)
-	var altitude = 0;	// feet (optional, default is 0)
-	var time = 2006.0;	// decimal years (optional, default is the current
-						// system time)
-	var myGeoMag = geoMag(latitude,longitude,altitude,time);
-	var magneticVariation = myGeoMag.dec;	// Geomagnetic declination
-											// (variation) in decimal degrees
-											// -- east is positive
-	var magneticDip = myGeoMag.dip;	// Geomagnetic dip in decimal degreed
-									// (down is positive)
-	var magneticFieldIntensity = myGeoMag.ti;	// Total Intensity of the
-												// geomagnetic field in
-												// nanoteslas
-	var magneticBH = myGeoMag.bh;	// Horizontal Intensity of the geomagnetic
-									// field in nanoteslas
-	var magneticBX = myGeoMag.bx;	// North Component of the geomagnetic field
-									// in nanoteslas
-	var magneticBY = myGeoMag.by;	// East Component of the geomagnetic field
-									// in nanoteslas
-	var magneticBZ = myGeoMag.bz;	// Vertical Component of the geomagnetic
-									// field (down is positive)
-	var lat = myGeoMag.lat;	// input latitude
-	var lon = myGeoMag.lon;	// input longitude
+    Usage:
+    geoMagFactory(wmm) returns a function which can compute the Earth's
+    magnetic field.
+    The returned function requires two arguments, latitude and longitude (in
+    decimal degrees), and, optionally, altitude in feet (default is 0), and
+    time in decimal years (e.g. 2009.75 -- default is the current system time).
 
-	Differences from NGDC test values:
-	Test values available at 
-	http://www.ngdc.noaa.gov/geomag/WMM/data/2006TestValues_WMM2005.pdf differ
-	slightly from the output of this function.  The difference seems to be due
-	to rounding errors in the reporting of the test values.  NGCD's
-	geomag_windows.exe reports declination in degrees and minutes rounded to 
-	the nearest minute.  The output of function in this file, geomag2.js,
-	converted to degrees and minutes and rounded to the nearest minute agree
-	with geomag_windows.exe in all cases where the test value and output value
-	differ.  It appears that the test values convert the degree & minute output
-	to decimal degrees and round to the nearest hundredth of a degree.
+    var cof = syncXHR('http://host/path/WMM.COF');
+    var wmm = cof2Obj(cof);
+    var geoMag = geoMagFactory(wmm);
+    var latitude = 40.0;    // decimal degrees (north is positive)
+    var longitude = -80.0;  // decimal degrees (east is positive)
+    var altitude = 0;   // feet (optional, default is 0)
+    var time = 2006.0;  // decimal years (optional, default is the current
+                        // system time)
+    var myGeoMag = geoMag(latitude,longitude,altitude,time);
+    var magneticVariation = myGeoMag.dec;   // Geomagnetic declination
+                                            // (variation) in decimal degrees
+                                            // -- east is positive
+    var magneticDip = myGeoMag.dip; // Geomagnetic dip in decimal degrees
+                                    // (down is positive)
+    var magneticFieldIntensity = myGeoMag.ti;   // Total Intensity of the
+                                                // geomagnetic field in
+                                                // nanoteslas
+    var magneticBH = myGeoMag.bh;   // Horizontal Intensity of the geomagnetic
+                                    // field in nT
+    var magneticBX = myGeoMag.bx;   // North Component of the geomagnetic field
+                                    // in nT
+    var magneticBY = myGeoMag.by;   // East Component of the geomagnetic field
+                                    // in nT
+    var magneticBZ = myGeoMag.bz;   // Vertical Component of the geomagnetic
+                                    // field (down is positive)
+    var lat = myGeoMag.lat; // input latitude
+    var lon = myGeoMag.lon; // input longitude
 */
 
 /*jslint plusplus: true, maxerr: 50, indent: 4 */
