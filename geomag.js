@@ -194,8 +194,8 @@ function geoMagFactory(wmm) {
 			bh,
 			ti,
 			dec,
-			dip;
-//			gv;		
+			dip,
+			gv = null;		
 
 		time = time ||
 			now.getFullYear() + (now.getMonth() + ((now.getDate() - 1) / 31)) /
@@ -277,7 +277,11 @@ function geoMagFactory(wmm) {
 					SPECIAL CASE:  NORTH/SOUTH GEOGRAPHIC POLES
 		*/
 				if (st === 0.0 && m === 1) {
-					if (n === 1) { pp[n] = pp[n - 1]; } else { pp[n] = ct * pp[n - 1] - k[m][n] * pp[n - 2]; }
+					if (n === 1) {
+						pp[n] = pp[n - 1];
+					} else {
+						pp[n] = ct * pp[n - 1] - k[m][n] * pp[n - 2];
+					}
 					parp = ar * pp[n];
 					bpp += (fm[m] * temp2 * parp);
 				}
@@ -310,8 +314,9 @@ function geoMagFactory(wmm) {
 		*/
 
 /*
-//		Grid Variation not yet implemented.
-		gv = -999.0;
+*/
+//		Grid Variation not yet fully implemented.
+
 		if (Math.abs(glat) >= 55.0) {
 			if (glat > 0.0 && glon >= 0.0) { gv = dec - glon; }
 			if (glat > 0.0 && glon < 0.0) { gv = dec + Math.abs(glon); }
@@ -320,11 +325,7 @@ function geoMagFactory(wmm) {
 			if (gv > +180.0) { gv -= 360.0; }
 			if (gv < -180.0) { gv += 360.0; }
 		}
-*/
-//		otime = time;
-//		oalt = alt;
-//		olat = glat;
-//		olon = glon;
-		return {dec: dec, dip: dip, ti: ti, bh: bh, bx: bx, by: by, bz: bz, lat: dlat, lon: dlon};
+
+		return {dec: dec, dip: dip, ti: ti, bh: bh, bx: bx, by: by, bz: bz, lat: dlat, lon: dlon, gv: gv};
 	};
 }
