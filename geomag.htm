@@ -55,13 +55,30 @@ function runTest() {
 		row = document.createElement("tr");
 		row.appendChild(document.createElement("td")).
 			appendChild(document.createTextNode('Expected'));
-		row.appendChild(document.createElement("td")).
+		row.appendChild((function () {
+			var cell = document.createElement("td");
+			cell.rowSpan = 2;
+			return cell;
+		})()).
 			appendChild(document.createTextNode(testValues.values[i].date));
-		row.appendChild(document.createElement("td")).
-			appendChild(document.createTextNode(parseFloat(testValues.values[i].alt) / 3280.8399));
-		row.appendChild(document.createElement("td")).
+		row.appendChild((function () {
+			var cell = document.createElement("td");
+			cell.rowSpan = 2;
+			return cell;
+		})()).
+			appendChild(document.createTextNode(
+				parseFloat(testValues.values[i].alt) / 3280.8399));
+		row.appendChild((function () {
+			var cell = document.createElement("td");
+			cell.rowSpan = 2;
+			return cell;
+		})()).
 			appendChild(document.createTextNode(testValues.values[i].lat));
-		row.appendChild(document.createElement("td")).
+		row.appendChild((function () {
+			var cell = document.createElement("td");
+			cell.rowSpan = 2;
+			return cell;
+		})()).
 			appendChild(document.createTextNode(testValues.values[i].lon));
 		row.appendChild(document.createElement("td")).
 			appendChild(document.createTextNode(testValues.values[i].d));
@@ -87,7 +104,7 @@ function runTest() {
 		row = document.createElement("tr");
 		row.appendChild(document.createElement("td")).
 			appendChild(document.createTextNode('Calculated'));
-		row.appendChild(document.createElement("td")).colSpan = 4;
+//		row.appendChild(document.createElement("td")).colSpan = 4;
 		row.appendChild(document.createElement("td")).
 			appendChild(document.createTextNode(calc.dec.toFixed(2)));
 		row.appendChild(document.createElement("td")).

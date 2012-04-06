@@ -148,17 +148,11 @@ function geoMagFactory(wmm) {
 	}
 	k[1][1] = 0.0;
 
-	return function (dlat, dlon, h, time) {
+	return function (glat, glon, h, time) {
 		var now = new Date(),
 			// convert h (in feet) to meters or set default of 0 meters
 			alt = (h / 3280.8399) || 0,
-			otime = -1000.0,
-			oalt = otime,
-			olat = otime,
-			olon = otime,
 			dt,
-			glat = dlat,
-			glon = dlon,
 			rlat = deg2rad(glat),
 			rlon = deg2rad(glon),
 			srlon = Math.sin(rlon),
@@ -205,24 +199,22 @@ function geoMagFactory(wmm) {
 		cp[1] = crlon;
 
 		/* CONVERT FROM GEODETIC COORDS. TO SPHERICAL COORDS. */
-		if (alt !== oalt || glat !== olat) {
-			q = Math.sqrt(a2 - c2 * srlat2);
-			q1 = alt * q;
-			q2 = ((q1 + a2) / (q1 + b2)) * ((q1 + a2) / (q1 + b2));
-			ct = srlat / Math.sqrt(q2 * crlat2 + srlat2);
-			st = Math.sqrt(1.0 - (ct * ct));
-			r2 = (alt * alt) + 2.0 * q1 + (a4 - c4 * srlat2) / (q * q);
-			r = Math.sqrt(r2);
-			d = Math.sqrt(a2 * crlat2 + b2 * srlat2);
-			ca = (alt + d) / r;
-			sa = c2 * crlat * srlat / (r * d);
+		q = Math.sqrt(a2 - c2 * srlat2);
+		q1 = alt * q;
+		q2 = ((q1 + a2) / (q1 + b2)) * ((q1 + a2) / (q1 + b2));
+		ct = srlat / Math.sqrt(q2 * crlat2 + srlat2);
+		st = Math.sqrt(1.0 - (ct * ct));
+		r2 = (alt * alt) + 2.0 * q1 + (a4 - c4 * srlat2) / (q * q);
+		r = Math.sqrt(r2);
+		d = Math.sqrt(a2 * crlat2 + b2 * srlat2);
+		ca = (alt + d) / r;
+		sa = c2 * crlat * srlat / (r * d);
+
+		for (m = 2; m <= maxord; m++) {
+			sp[m] = sp[1] * cp[m - 1] + cp[1] * sp[m - 1];
+			cp[m] = cp[1] * cp[m - 1] - sp[1] * sp[m - 1];
 		}
-		if (glon !== olon) {
-			for (m = 2; m <= maxord; m++) {
-				sp[m] = sp[1] * cp[m - 1] + cp[1] * sp[m - 1];
-				cp[m] = cp[1] * cp[m - 1] - sp[1] * sp[m - 1];
-			}
-		}
+
 		aor = re / r;
 		ar = aor * aor;
 
@@ -234,22 +226,21 @@ function geoMagFactory(wmm) {
 				COMPUTE UNNORMALIZED ASSOCIATED LEGENDRE POLYNOMIALS
 				AND DERIVATIVES VIA RECURSION RELATIONS
 		*/
-				if (alt !== oalt || glat !== olat) {
-					if (n === m) {
-						p[m][n] = st * p[m - 1][n - 1];
-						dp[m][n] = st * dp[m - 1][n - 1] + ct *
-							p[m - 1][n - 1];
-					} else if (n === 1 && m === 0) {
-						p[m][n] = ct * p[m][n - 1];
-						dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1];
-					} else if (n > 1 && n !== m) {
-						if (m > n - 2) { p[m][n - 2] = 0; }
-						if (m > n - 2) { dp[m][n - 2] = 0.0; }
-						p[m][n] = ct * p[m][n - 1] - k[m][n] * p[m][n - 2];
-						dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1] -
-							k[m][n] * dp[m][n - 2];
-					}
+				if (n === m) {
+					p[m][n] = st * p[m - 1][n - 1];
+					dp[m][n] = st * dp[m - 1][n - 1] + ct *
+						p[m - 1][n - 1];
+				} else if (n === 1 && m === 0) {
+					p[m][n] = ct * p[m][n - 1];
+					dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1];
+				} else if (n > 1 && n !== m) {
+					if (m > n - 2) { p[m][n - 2] = 0; }
+					if (m > n - 2) { dp[m][n - 2] = 0.0; }
+					p[m][n] = ct * p[m][n - 1] - k[m][n] * p[m][n - 2];
+					dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1] -
+						k[m][n] * dp[m][n - 2];
 				}
+
 		/*
 				TIME ADJUST THE GAUSS COEFFICIENTS
 		*/
@@ -313,19 +304,17 @@ function geoMagFactory(wmm) {
 			OTHERWISE, SET MAGNETIC GRID VARIATION TO -999.0
 		*/
 
-/*
-*/
 //		Grid Variation not yet fully implemented.
 
 		if (Math.abs(glat) >= 55.0) {
-			if (glat > 0.0 && glon >= 0.0) { gv = dec - glon; }
-			if (glat > 0.0 && glon < 0.0) { gv = dec + Math.abs(glon); }
-			if (glat < 0.0 && glon >= 0.0) { gv = dec + glon; }
-			if (glat < 0.0 && glon < 0.0) { gv = dec - Math.abs(glon); }
-			if (gv > +180.0) { gv -= 360.0; }
-			if (gv < -180.0) { gv += 360.0; }
+			if (glat > 0.0 && glon >= 0.0) { gv = dec - glon;
+			} else if (glat > 0.0 && glon < 0.0) { gv = dec + Math.abs(glon);
+			} else if (glat < 0.0 && glon >= 0.0) { gv = dec + glon;
+			} else if (glat < 0.0 && glon < 0.0) { gv = dec - Math.abs(glon); }
+			if (gv > 180.0) { gv -= 360.0;
+			} else if (gv < -180.0) { gv += 360.0; }
 		}
 
-		return {dec: dec, dip: dip, ti: ti, bh: bh, bx: bx, by: by, bz: bz, lat: dlat, lon: dlon, gv: gv};
+		return {dec: dec, dip: dip, ti: ti, bh: bh, bx: bx, by: by, bz: bz, lat: glat, lon: glon, gv: gv};
 	};
 }
