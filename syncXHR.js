@@ -22,7 +22,7 @@ function syncXHR(url) {
 		}
 	}
 	xmlHttp.open("GET", url, false);
-	xmlHttp.overrideMimeType("text/plain");
+	if (xmlHttp.overrideMimeType) {xmlHttp.overrideMimeType("text/plain");}
 	xmlHttp.send(null);
 
 	return (xmlHttp.status === 200 || xmlHttp.readyState === 4) ? xmlHttp.responseText : false;

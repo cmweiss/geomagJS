@@ -304,8 +304,6 @@ function geoMagFactory(wmm) {
 			OTHERWISE, SET MAGNETIC GRID VARIATION TO -999.0
 		*/
 
-//		Grid Variation not yet fully implemented.
-
 		if (Math.abs(glat) >= 55.0) {
 			if (glat > 0.0 && glon >= 0.0) {
 				gv = dec - glon;
