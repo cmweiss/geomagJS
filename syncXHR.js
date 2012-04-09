@@ -17,12 +17,12 @@ function syncXHR(url) {
 			try {
 				xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
 			} catch (e2) {
-				alert("Your browser does not support AJAX!");
-				return false;
+				throw new Error("XMLHttpRequest is not supported");
 			}
 		}
 	}
 	xmlHttp.open("GET", url, false);
+	xmlHttp.overrideMimeType("text/plain");
 	xmlHttp.send(null);
 
 	return (xmlHttp.status === 200 || xmlHttp.readyState === 4) ? xmlHttp.responseText : false;

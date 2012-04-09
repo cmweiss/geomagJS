@@ -189,7 +189,7 @@ function geoMagFactory(wmm) {
 			ti,
 			dec,
 			dip,
-			gv = null;		
+			gv = null;
 
 		time = time ||
 			now.getFullYear() + (now.getMonth() + ((now.getDate() - 1) / 31)) /
@@ -307,11 +307,17 @@ function geoMagFactory(wmm) {
 //		Grid Variation not yet fully implemented.
 
 		if (Math.abs(glat) >= 55.0) {
-			if (glat > 0.0 && glon >= 0.0) { gv = dec - glon;
-			} else if (glat > 0.0 && glon < 0.0) { gv = dec + Math.abs(glon);
-			} else if (glat < 0.0 && glon >= 0.0) { gv = dec + glon;
-			} else if (glat < 0.0 && glon < 0.0) { gv = dec - Math.abs(glon); }
-			if (gv > 180.0) { gv -= 360.0;
+			if (glat > 0.0 && glon >= 0.0) {
+				gv = dec - glon;
+			} else if (glat > 0.0 && glon < 0.0) {
+				gv = dec + Math.abs(glon);
+			} else if (glat < 0.0 && glon >= 0.0) {
+				gv = dec + glon;
+			} else if (glat < 0.0 && glon < 0.0) {
+				gv = dec - Math.abs(glon);
+			}
+			if (gv > 180.0) {
+				gv -= 360.0;
 			} else if (gv < -180.0) { gv += 360.0; }
 		}
 

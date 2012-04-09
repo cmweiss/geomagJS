@@ -17,14 +17,24 @@
 		<script src="cof2Obj.js"></script>
 		<script src="syncXHR.js"></script>
 		<script>
+/*jslint plusplus: true */
+/*global geoMagFactory, cof2Obj, syncXHR, Element */
 var pathArr = window.location.href.split("/");
 pathArr.pop();
 var path = pathArr.join("/");
 var geoMag = geoMagFactory(cof2Obj(syncXHR(path + '/WMM.COF')));
 
 function runTest() {
+	'use strict';
+
+	function addAttribute(el, name, value) {
+		el.setAttribute(name, value);
+		return el;
+	}
+
 	var row,
 		calc,
+		i,
 		testValues = (function (valueFile) {
 			var i,
 				lines = valueFile.replace(/\r/g, '').split('\n'),
@@ -49,36 +59,21 @@ function runTest() {
 				});
 			}
 			return {model: model, values: values};
-		})(syncXHR(path + '/testValues.txt'));
+		}(syncXHR(path + '/testValues.txt')));
 
 	for (i = 0; i < testValues.values.length; i++) {
 		row = document.createElement("tr");
 		row.appendChild(document.createElement("td")).
 			appendChild(document.createTextNode('Expected'));
-		row.appendChild((function () {
-			var cell = document.createElement("td");
-			cell.rowSpan = 2;
-			return cell;
-		})()).
+		row.appendChild(addAttribute(document.createElement("td"), "rowSpan", 2)).
 			appendChild(document.createTextNode(testValues.values[i].date));
-		row.appendChild((function () {
-			var cell = document.createElement("td");
-			cell.rowSpan = 2;
-			return cell;
-		})()).
+		row.appendChild(addAttribute(document.createElement("td"), "rowSpan", 2)).
 			appendChild(document.createTextNode(
-				parseFloat(testValues.values[i].alt) / 3280.8399));
-		row.appendChild((function () {
-			var cell = document.createElement("td");
-			cell.rowSpan = 2;
-			return cell;
-		})()).
+				parseFloat(testValues.values[i].alt) / 3280.8399
+			));
+		row.appendChild(addAttribute(document.createElement("td"), "rowSpan", 2)).
 			appendChild(document.createTextNode(testValues.values[i].lat));
-		row.appendChild((function () {
-			var cell = document.createElement("td");
-			cell.rowSpan = 2;
-			return cell;
-		})()).
+		row.appendChild(addAttribute(document.createElement("td"), "rowSpan", 2)).
 			appendChild(document.createTextNode(testValues.values[i].lon));
 		row.appendChild(document.createElement("td")).
 			appendChild(document.createTextNode(testValues.values[i].d));
@@ -104,7 +99,6 @@ function runTest() {
 		row = document.createElement("tr");
 		row.appendChild(document.createElement("td")).
 			appendChild(document.createTextNode('Calculated'));
-//		row.appendChild(document.createElement("td")).colSpan = 4;
 		row.appendChild(document.createElement("td")).
 			appendChild(document.createTextNode(calc.dec.toFixed(2)));
 		row.appendChild(document.createElement("td")).
@@ -120,42 +114,56 @@ function runTest() {
 		row.appendChild(document.createElement("td")).
 			appendChild(document.createTextNode(calc.ti.toFixed(1)));
 		row.appendChild(document.createElement("td")).
-			appendChild(document.createTextNode(calc.gv ? calc.gv.toFixed(2) : ''));
+			appendChild(document.createTextNode(
+				calc.gv ? calc.gv.toFixed(2) : ''
+			));
 		document.getElementById("testBody").appendChild(row);
 	}
 }
 
 function calculate() {
-	var lat = parseFloat(document.getElementById("lat").value);
-	var lon = parseFloat(document.getElementById("lon").value);
-	var alt = parseFloat(document.getElementById("alt").value);
-	var myGeoMag = geoMag(lat,lon,alt);
+	'use strict';
+	var lat = parseFloat(document.getElementById("lat").value),
+		lon = parseFloat(document.getElementById("lon").value),
+		alt = parseFloat(document.getElementById("alt").value),
+		myGeoMag = geoMag(lat, lon, alt);
 	document.getElementById("var").innerHTML = myGeoMag.dec;
+}
+
+
+function init() {
+	'use strict';
+	document.getElementById('calculate').onclick = calculate;
+	runTest();
 }
 		</script>
 	</head>
 	<body>
 	<h1>Geomag Library Demo and Test</h1>
-	<p>This is a simple page to demonstrate the <a href="geomag.js">geomag.js</a>
-	library which depends on <a href="WMM.COF">a world magnetic model coefficient file</a>.
+	<p>This is a simple page to demonstrate the
+	<a href="geomag.js">geomag.js</a>
+	library which depends on <a href="WMM.COF">a world magnetic model
+	coefficient file</a>.
 	The coefficient file and more information are available at
 	<a href="http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml">The World
 	Magnetic Model</a> site of NOAA's National Geophysical Data Center.</p>
-	<p>The source code repository for the geomag.js library is at <a href="https://github.com/cmweiss/geomagJS">https://github.com/cmweiss/geomagJS</a>.</p>
+	<p>The source code repository for the geomag.js library is at
+	<a href="https://github.com/cmweiss/geomagJS">https://github.com/cmweiss/geomagJS</a>.
+	</p>
 	<table>
 	<tr>
 		<td class="labelr">Latitude:</td>
-		<td><input id="lat" value="40"></td>
+		<td><input type="text" id="lat" value="40" /></td>
 		<td>(decimal degrees - north is positive)</td>
 	</tr>
 	<tr>
 		<td class="labelr">Longitude:</td>
-		<td><input id="lon" value="-80"></td>
+		<td><input type="text" id="lon" value="-80" /></td>
 		<td>(decimal degrees - east is positive)</td>
 	</tr>
 	<tr>
 		<td class="labelr">Altitude:</td>
-		<td><input id="alt" value="0"></td>
+		<td><input type="text" id="alt" value="0" /></td>
 		<td>(feet)</td>
 	</tr>
 	<tr>
@@ -165,7 +173,7 @@ function calculate() {
 	</tr>
 	<tr>
 		<td></td>
-		<td><button onclick="calculate()">Calculate</button></td>
+		<td><button id="calculate">Calculate</button></td>
 		<td></td>
 	</tr>
 	</table>
@@ -195,6 +203,6 @@ function calculate() {
 	</tr>
 	<tbody id="testBody"></tbody>
 	</table>
-	<script>runTest(); </script>
+	<script>init(); </script>
 	</body>
 </html>
