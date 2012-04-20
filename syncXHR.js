@@ -5,24 +5,26 @@
 */
 
 /*jslint devel: true, browser: true, windows: true */
-function syncXHR(url) {
-	'use strict';
-	var xmlHttp;
-	try {
-		xmlHttp = new XMLHttpRequest();
-	} catch (e0) {
-		try {// Internet Explorer 5 & 6
-			xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+if (window.XMLHttpRequest === undefined) {
+	window.XMLHttpRequest = function() {
+		try {
+			return new ActiveXObject("Msxml2.XMLHTTP.6.0");
 		} catch (e1) {
 			try {
-				xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+				return new ActiveXObject("Msxml2.XMLHTTP.3.0");
 			} catch (e2) {
 				throw new Error("XMLHttpRequest is not supported");
 			}
 		}
-	}
+	};
+}
+
+function syncXHR(url) {
+	'use strict';
+	var xmlHttp = new XMLHttpRequest();
+
 	xmlHttp.open("GET", url, false);
-	if (xmlHttp.overrideMimeType) {xmlHttp.overrideMimeType("text/plain");}
+	if ("overrideMimeType" in xmlHttp) {xmlHttp.overrideMimeType("text/plain");}
 	xmlHttp.send(null);
 
 	return (xmlHttp.status === 200 || xmlHttp.readyState === 4) ? xmlHttp.responseText : false;

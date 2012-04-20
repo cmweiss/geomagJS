@@ -1,2 +1,2 @@
-- Implement grid variation
 - Include model metadata in the returned object
+- Warn when computing for dates outside of the epoch

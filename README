@@ -7,16 +7,16 @@ geoMagFactory() requires a world magnetic model (WMM) object. The helper functio
 
 Usage:
 geoMagFactory(wmm) returns a function which can compute the Earth's magnetic field.
-The returned function requires two arguments, latitude and longitude (in decimal degrees), and, optionally, altitude in feet (default is 0), and time in decimal years (e.g. 2009.75 -- default is the current system time).
+The returned function requires two arguments, latitude and longitude (in decimal degrees), and, optionally, altitude in feet (default is 0), and a date object (default is the current system time).
 
 var cof = syncXHR('http://host/path/WMM.COF'),
     wmm = cof2Obj(cof),
     geoMag = geoMagFactory(wmm),
-    latitude = 40.0,    // decimal degrees (north is positive)
-    longitude = -80.0,  // decimal degrees (east is positive)
-    altitude = 0,       // feet (optional, default is 0)
-    time = 2012.25,     // decimal years
-                        // (optional, default is the current system time)
+    latitude = 40.0,                // decimal degrees (north is positive)
+    longitude = -80.0,              // decimal degrees (east is positive)
+    altitude = 0,                   // feet (optional, default is 0)
+    time = new Date(2012, 4, 20),   // decimal years
+                                    // (optional, default is the current system time)
     myGeoMag = geoMag(latitude,longitude,altitude,time),
     magneticVariation = myGeoMag.dec,   // Geomagnetic declination (variation)
                                         // in decimal degrees

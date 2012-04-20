@@ -19,38 +19,38 @@
     magnetic field.
     The returned function requires two arguments, latitude and longitude (in
     decimal degrees), and, optionally, altitude in feet (default is 0), and
-    time in decimal years (e.g. 2009.75 -- default is the current system time).
+    a date object (default is the current system time).
 
-    var cof = syncXHR('http://host/path/WMM.COF');
-    var wmm = cof2Obj(cof);
-    var geoMag = geoMagFactory(wmm);
-    var latitude = 40.0;    // decimal degrees (north is positive)
-    var longitude = -80.0;  // decimal degrees (east is positive)
-    var altitude = 0;   // feet (optional, default is 0)
-    var time = 2006.0;  // decimal years (optional, default is the current
-                        // system time)
-    var myGeoMag = geoMag(latitude,longitude,altitude,time);
-    var magneticVariation = myGeoMag.dec;   // Geomagnetic declination
+    var cof = syncXHR('http://host/path/WMM.COF'),
+	    wmm = cof2Obj(cof),
+	    geoMag = geoMagFactory(wmm),
+	    latitude = 40.0,                // decimal degrees (north is positive)
+	    longitude = -80.0,              // decimal degrees (east is positive)
+	    altitude = 0,                   // feet (optional, default is 0)
+	    time = new Date(2012, 4, 20),   // (optional, default is the current
+                                        // system time)
+	    myGeoMag = geoMag(latitude, longitude, altitude, time),
+	    magneticVariation = myGeoMag.dec,   // Geomagnetic declination
                                             // (variation) in decimal degrees
                                             // -- east is positive
-    var magneticDip = myGeoMag.dip; // Geomagnetic dip in decimal degrees
+	    magneticDip = myGeoMag.dip, // Geomagnetic dip in decimal degrees
                                     // (down is positive)
-    var magneticFieldIntensity = myGeoMag.ti;   // Total Intensity of the
+	    magneticFieldIntensity = myGeoMag.ti,   // Total intensity of the
                                                 // geomagnetic field in
                                                 // nanoteslas
-    var magneticBH = myGeoMag.bh;   // Horizontal Intensity of the geomagnetic
+	    magneticBH = myGeoMag.bh,   // Horizontal intensity of the geomagnetic
                                     // field in nT
-    var magneticBX = myGeoMag.bx;   // North Component of the geomagnetic field
+	    magneticBX = myGeoMag.bx,   // North component of the geomagnetic field
                                     // in nT
-    var magneticBY = myGeoMag.by;   // East Component of the geomagnetic field
+	    magneticBY = myGeoMag.by,   // East component of the geomagnetic field
                                     // in nT
-    var magneticBZ = myGeoMag.bz;   // Vertical Component of the geomagnetic
+	    magneticBZ = myGeoMag.bz,   // Vertical component of the geomagnetic
                                     // field (down is positive)
-    var lat = myGeoMag.lat; // input latitude
-    var lon = myGeoMag.lon; // input longitude
+	    lat = myGeoMag.lat, // input latitude
+	    lon = myGeoMag.lon; // input longitude
 */
 
-/*jslint plusplus: true, maxerr: 50, indent: 4 */
+/*jslint plusplus: true */
 function geoMagFactory(wmm) {
 	'use strict';
 	function rad2deg(rad) {
@@ -148,11 +148,20 @@ function geoMagFactory(wmm) {
 	}
 	k[1][1] = 0.0;
 
-	return function (glat, glon, h, time) {
-		var now = new Date(),
-			// convert h (in feet) to meters or set default of 0 meters
-			alt = (h / 3280.8399) || 0,
-			dt,
+	return function (glat, glon, h, date) {
+		function decimalDate(date) {
+			date = date || new Date();
+			var year = date.getFullYear(),
+				daysInYear = 365 +
+					(((year % 400 === 0) || (year % 4 === 0 && (year % 100 > 0))) ? 1 : 0),
+				msInYear = daysInYear * 24 * 60 * 60 * 1000;
+
+			return date.getFullYear() + (date.valueOf() - (new Date(year, 0)).valueOf()) / msInYear;
+		}
+
+		var alt = (h / 3280.8399) || 0, // convert h (in feet) to meters or set default of 0 meters
+			time = decimalDate(date),
+			dt = time - epoch,
 			rlat = deg2rad(glat),
 			rlon = deg2rad(glon),
 			srlon = Math.sin(rlon),
@@ -190,11 +199,6 @@ function geoMagFactory(wmm) {
 			dec,
 			dip,
 			gv = null;
-
-		time = time ||
-			now.getFullYear() + (now.getMonth() + ((now.getDate() - 1) / 31)) /
-			12;
-		dt = time - epoch;
 		sp[1] = srlon;
 		cp[1] = crlon;
 
