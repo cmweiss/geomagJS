@@ -159,7 +159,7 @@ function geoMagFactory(wmm) {
 			return date.getFullYear() + (date.valueOf() - (new Date(year, 0)).valueOf()) / msInYear;
 		}
 
-		var alt = (h / 3280.8399) || 0, // convert h (in feet) to meters or set default of 0 meters
+		var alt = (h / 3280.8399) || 0, // convert h (in feet) to kilometers or set default of 0
 			time = decimalDate(date),
 			dt = time - epoch,
 			rlat = deg2rad(glat),
@@ -198,7 +198,7 @@ function geoMagFactory(wmm) {
 			ti,
 			dec,
 			dip,
-			gv = null;
+			gv;
 		sp[1] = srlon;
 		cp[1] = crlon;
 
@@ -323,6 +323,6 @@ function geoMagFactory(wmm) {
 			} else if (gv < -180.0) { gv += 360.0; }
 		}
 
-		return {dec: dec, dip: dip, ti: ti, bh: bh, bx: bx, by: by, bz: bz, lat: glat, lon: glon, gv: gv};
+		return {dec: dec, dip: dip, ti: ti, bh: bh, bx: bx, by: by, bz: bz, lat: glat, lon: glon, gv: gv, epoch: epoch};
 	};
 }
