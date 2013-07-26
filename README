@@ -15,8 +15,7 @@ var cof = syncXHR('http://host/path/WMM.COF'),
     latitude = 40.0,                // decimal degrees (north is positive)
     longitude = -80.0,              // decimal degrees (east is positive)
     altitude = 0,                   // feet (optional, default is 0)
-    time = new Date(2012, 4, 20),   // default is the current date
-                                    // (optional, default is the current system time)
+    time = new Date(2012, 4, 20),   // optional, default is the current system time
     myGeoMag = geoMag(latitude,longitude,altitude,time),
     magneticVariation = myGeoMag.dec,   // Geomagnetic declination (variation)
                                         // in decimal degrees
