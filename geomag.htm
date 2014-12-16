@@ -18,7 +18,7 @@
 }
 
 		</style>
-		<script src="geomag.js"></script>
+		<script src="newGeomag.js"></script>
 		<script src="cof2Obj.js"></script>
 		<script src="syncXHR.js"></script>
 		<script>
@@ -36,8 +36,10 @@ function decimalDate2Date(ddate) {
 var pathArr = window.location.href.split("/");
 pathArr.pop();
 var path = pathArr.join("/");
-var geoMag = geoMagFactory(cof2Obj(syncXHR(path + '/WMM.COF')));
-
+//var geoMag = geoMagFactory(cof2Obj(syncXHR(path + '/WMM.COF')));
+var cof = syncXHR(path + '/WMM.COF');
+var newGeomag = new Geomag(cof)
+var geoMag = newGeomag.mag;
 function runTest() {
 	'use strict';
 
@@ -196,8 +198,8 @@ function init() {
 	<tr>
 		<td colspan="13">
 			<a href =
-				"http://www.ngdc.noaa.gov/geomag/WMM/data/WMM2010/WMM2010testvalues.pdf"
-			>World Magnetic Model (WMM2010) - Test values</a> (pdf)
+				"http://www.ngdc.noaa.gov/geomag/WMM/data/WMM2015/WMM2015testvalues.pdf"
+			>World Magnetic Model (WMM2015) - Test values</a> (pdf)
 		</td>
 	</tr>
 	<tr>
