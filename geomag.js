@@ -1,6 +1,6 @@
 /*	2012-03-26
+    Copyright 2012 Christopher Weiss (cmweiss@gmail.com)
 
-    by Christopher Weiss (cmweiss@gmail.com)
     Suggestions for improvements are appreciated.
 
     Adapted from the geomagc software and World Magnetic Model of the NOAA
