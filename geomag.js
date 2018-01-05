@@ -156,7 +156,7 @@ function geoMagFactory(wmm) {
 					(((year % 400 === 0) || (year % 4 === 0 && (year % 100 > 0))) ? 1 : 0),
 				msInYear = daysInYear * 24 * 60 * 60 * 1000;
 
-			return date.getUTCFullYear() + (date.valueOf() - Date.UTC(year)) / msInYear;
+			return date.getUTCFullYear() + (date.valueOf() - Date.UTC(year, 0)) / msInYear;
 		}
 
 		var alt = (h / 3280.8399) || 0, // convert h (in feet) to kilometers or set default of 0
